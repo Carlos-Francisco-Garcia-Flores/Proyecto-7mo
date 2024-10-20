@@ -4,6 +4,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { InformacionModule } from './informacion/informacion.module';
 import { CorsMiddleware } from './cors.middleware';
+import { AuthModule } from './auth/auth.module';
+import { IncidentModule } from './incident/incident.module';
 
 
 @Module({
@@ -20,6 +22,8 @@ import { CorsMiddleware } from './cors.middleware';
     }),
     UsuariosModule,
     InformacionModule,
+    AuthModule,
+    IncidentModule,
   ],
 })
 export class AppModule implements NestModule {

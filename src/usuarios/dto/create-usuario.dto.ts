@@ -16,5 +16,5 @@ export class CreateUsuarioDto {
 
   @IsString()
   @IsNotEmpty()
-  tipo_Usuario: string;
+  role: string;
 }

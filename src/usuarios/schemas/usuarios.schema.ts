@@ -13,7 +13,7 @@ export class Usuario {
   contraseña: string;
 
   @Prop({ required: true })
-  tipo_Usuario: string;
+  role: string;
 
   @Prop({ required: true })
   estado: string;  
