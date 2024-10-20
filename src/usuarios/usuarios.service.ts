@@ -31,4 +31,7 @@ export class UsuariosService {
   async delete(id: string): Promise<any> {
     return this.usuarioModel.findByIdAndDelete(id).exec();
   }
+
+
+  
 }
