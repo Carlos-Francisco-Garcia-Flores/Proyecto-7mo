@@ -3,7 +3,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { InformacionModule } from './informacion/informacion.module';
-import { AuthModule } from './auth/auth.module';
 import { CorsMiddleware } from './cors.middleware';
 
 
@@ -21,7 +20,6 @@ import { CorsMiddleware } from './cors.middleware';
     }),
     UsuariosModule,
     InformacionModule,
-    AuthModule,
   ],
 })
 export class AppModule implements NestModule {
