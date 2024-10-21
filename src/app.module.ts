@@ -7,7 +7,6 @@ import { CorsMiddleware } from './cors.middleware';
 import { AuthModule } from './auth/auth.module';
 import { IncidentModule } from './incident/incident.module';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
