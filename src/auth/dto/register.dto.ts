@@ -14,7 +14,7 @@ export class RegisterDto{
     @Prop({ required: true})
     @MinLength(6, { message: "El nombre de usuario debe tener al menos un total de  6 caracteres" })
     @MaxLength(12, { message: "El nombre de usuario debe tener como maximo un total de 12 caracteres" })
-    @Matches(/^[a-zA-Z0-9_]{6,12}$/,{ message: "El nombre de usuario solo puede contener caracteres alfanumericos y ocupar '_' como espacio" })
+    @Matches(/^[a-zA-Z0-9]{6,12}$/,{ message: "El nombre de usuario debe contener solo caracteres alfanumericos" })
     usuario: string;
   
     @Prop({ required: true })
