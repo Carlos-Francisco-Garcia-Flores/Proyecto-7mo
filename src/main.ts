@@ -1,4 +1,4 @@
-import cookieSession from 'cookie-session';
+const cookieSession = require('cookie-session');
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
@@ -6,14 +6,12 @@ import { ConfigService } from '@nestjs/config';
 import mongoose from 'mongoose';
 import helmet from 'helmet';
 
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const configService = app.get(ConfigService);
 
   app.useGlobalPipes(new ValidationPipe());
-
 
   app.use(helmet());
 
@@ -31,14 +29,11 @@ async function bootstrap() {
         maxAge: 3600000
       }
     })
-  )
+  );
 
   mongoose.set('sanitizeFilter', true);
 
   await app.listen(configService.get<number>("PORT"));
-
-
-  
 }
 
 bootstrap();

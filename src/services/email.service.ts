@@ -10,8 +10,8 @@ export class EmailService {
     this.transporter = nodemailer.createTransport({
       service: 'gmail', // Ejemplo usando Gmail
       auth: {
-        user: this.configService.get<string>('EMAIL_USERNAME'),
-        pass: this.configService.get<string>('EMAIL_PASSWORD'),
+        user: this.configService.get<string>('GMAIL_USER'),
+        pass: this.configService.get<string>('GMAIL_PASS'),
       },
     });
   }
@@ -41,7 +41,7 @@ export class EmailService {
       html: `
         <div style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px; border-radius: 10px; max-width: 600px; margin: auto;">
           <div style="background-color: #0A1B39; padding: 20px; border-radius: 10px 10px 0 0; color: white; text-align: center;">
-            <h2>¡Bienvenido a <strong>BeatBox<sub>fitness room</sub></strong>!</h2>
+            <h2>¡Bienvenido a <strong>BeatBox</strong>!</h2>
           </div>
           <div style="background-color: white; padding: 20px; border-radius: 0 0 10px 10px; color: #333;">
             <p>Estimado usuario,</p>

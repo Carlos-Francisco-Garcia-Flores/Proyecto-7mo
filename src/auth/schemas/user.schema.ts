@@ -2,10 +2,10 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { IsEmail, IsNotEmpty, MinLength, MaxLength } from 'class-validator';
 import { Document } from 'mongoose';
 
-export type UserDocument = User & Document;
+export type UserDocument = Usuarios & Document;
 
-@Schema()
-export class User {
+@Schema({ collection: 'usuarios' })
+export class Usuarios {
   @Prop({ default: ''})
   sessionId: string;
 
@@ -31,5 +31,5 @@ export class User {
   role: string
 }
 
-export const UserSchema = SchemaFactory.createForClass(User).set('versionKey', false);
+export const UserSchema = SchemaFactory.createForClass(Usuarios).set('versionKey', false);
   

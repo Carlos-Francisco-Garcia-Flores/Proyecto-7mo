@@ -3,7 +3,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from './schemas/user.schema';
+import { Usuarios, UserSchema } from './schemas/user.schema';
 import { HttpModule } from '@nestjs/axios';
 import { JwtModule } from '@nestjs/jwt';
 import { EmailService } from '../services/email.service';
@@ -17,15 +17,15 @@ import { IncidentModule } from '../incident/incident.module';
     HttpModule,
     MongooseModule.forFeature([
       {
-        name: User.name,
+        name: Usuarios.name,
         schema: UserSchema,
       },
     ]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('SECRET_KEY'),
-        signOptions: { expiresIn: '1h' },
+        secret: configService.get<string>('JWT_SECRET'), // Asegúrate de que la clave esté configurada
+        signOptions: { expiresIn: '1h' }, // Configuración de expiración del token
       }),
       inject: [ConfigService],
     }),
