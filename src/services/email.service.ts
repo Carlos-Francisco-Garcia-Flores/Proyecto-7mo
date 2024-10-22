@@ -49,7 +49,7 @@ export class EmailService {
             <p style="text-align: center;">
               <span style="
                 display: inline-block;
-                background-color: #00CFFF;
+                background-color: #ff8800;
                 color: white;
                 padding: 15px 30px;
                 border-radius: 25px;
@@ -63,7 +63,7 @@ export class EmailService {
             </p>
             <p style="font-size: 14px;">Si no realizó esta solicitud, puede ignorar este mensaje.</p>
             <p>Atentamente,</p>
-            <p><strong>BeatBox fitness room</strong></p>
+            <p><strong>BeatBox</strong></p>
           </div>
         </div>
       `,
