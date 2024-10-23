@@ -16,6 +16,11 @@ export class IncidentController {
         return this.incidentService.getOpenIncident();
     }
 
+    @Get('correo/incidentes')
+    async getOpenEmailIncident() {
+        return this.incidentService.getOpenIncident();
+    }
+
     @Post('close')
     async closeOpenIncident(@Body() closeIncidentDto: CloseIncidentDto) {
         return this.incidentService.closeIncident(closeIncidentDto);

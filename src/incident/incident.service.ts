@@ -51,6 +51,10 @@ export class IncidentService {
         return this.incidentModel.find({ status: 'open' }).exec();
     }
 
+    async getOpenEmailIncident(): Promise<Incident[]> {
+        return this.incidentModel.find({ status: 'open' }).exec();
+    }
+
     //TODO: Cerrar una incidencia
     async closeIncident(closeIncidentDto: CloseIncidentDto): Promise<Incident> {
         const { usuario } = closeIncidentDto;
