@@ -6,26 +6,9 @@ import { RolesGuard } from '../common/guards/roles.guard';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('documento-regulatorio')
-@UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos todas las rutas con autenticación JWT y Roles
 export class DocumentoRegulatorioController {
   constructor(private readonly documentoService: DocumentoRegulatorioService) {}
 
-  // 1. Crear un nuevo documento regulatorio (solo admins)
-  @Roles('admin')  // Solo accesible para administradores
-  @Post()
-  async crearDocumento(@Body() dto: CrearDocumentoDto) {
-    return await this.documentoService.crearDocumento(dto);
-  }
-
-  // 2. Obtener todos los documentos no eliminados (accesible solo para admin)
-  @Roles('admin')  // Permitimos a ambos roles ver documentos
-  @Get()
-  async obtenerDocumentos() {
-    return await this.documentoService.obtenerDocumentos();
-  }
-
-  // 3. Obtener la versión vigente de un documento por su tipo (accesible para tanto admin como users)
-  @Roles('user', 'admin')  // Permitir acceso tanto a usuarios como administradores
   @Get('vigente/:tipo')
   async obtenerDocumentoVigente(@Param('tipo') tipo: string) {
     console.log('Buscando documento del tipo:', tipo);  // Log para verificar el tipo recibido
@@ -38,15 +21,31 @@ export class DocumentoRegulatorioController {
     return documento;
   }
 
+  @UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos las rutas con autenticación JWT y Roles
+  @Roles('admin')  // Solo accesible para administradores
+  @Post()
+  async crearDocumento(@Body() dto: CrearDocumentoDto) {
+    return await this.documentoService.crearDocumento(dto);
+  }
 
-  // 4. Obtener el historial completo de versiones de un documento por su tipo (solo admins)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos las rutas con autenticación JWT y Roles
+  @Roles('admin')  // Permitimos a ambos roles ver documentos
+  @Get()
+  async obtenerDocumentos() {
+    return await this.documentoService.obtenerDocumentos();
+  }
+
+  
+ 
+
+  @UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos las rutas con autenticación JWT y Roles
   @Roles('admin')  // Solo accesible para administradores
   @Get('historial/:tipo')
   async obtenerHistorial(@Param('tipo') tipo: string) {
     return await this.documentoService.obtenerHistorialDeVersiones(tipo);
   }
 
-  // 5. Modificar un documento, creando una nueva versión (solo admins)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos las rutas con autenticación JWT y Roles
   @Roles('admin')  // Solo accesible para administradores
   @Put(':id')
   async modificarDocumento(@Param('id') id: string, @Body() dto: ModificarDocumentoDto) {
@@ -59,7 +58,7 @@ export class DocumentoRegulatorioController {
     return documento;
   }
 
-  // 6. Eliminar documento lógicamente (no físicamente) (solo admins)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos las rutas con autenticación JWT y Roles
   @Roles('admin')  // Solo accesible para administradores
   @Patch(':id/eliminar')
   async eliminarDocumento(@Param('id') id: string) {
