@@ -13,7 +13,6 @@ import { OtpService } from '../services/otp.service';
 import { PwnedService } from '../services/pwned.service';
 import { ZxcvbnService } from '../services/zxcvbn.service';
 import { IncidentService } from '../incident/incident.service';
-const moment = require('moment-timezone');
 
 @Injectable()
 export class AuthService {
@@ -135,7 +134,7 @@ export class AuthService {
 
     if (userIncident && userIncident.isBlocked) {
       throw new ForbiddenException(
-        `Su cuenta ha sido bloqueada temporalmente. Podrá acceder nuevamente a las ${moment(userIncident.blockExpiresAt).tz('America/Mexico_City').format('HH:mm:ss')}.`
+        `Su cuenta ha sido bloqueada temporalmente. Podrá acceder nuevamente a las ${new Date(userIncident.blockExpiresAt).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}.`,
       );
     }
 
