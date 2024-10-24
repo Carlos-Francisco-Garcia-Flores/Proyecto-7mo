@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Incident, IncidentDocument } from './schemas/incident.schema';
 import { CloseIncidentDto, UsernameIsBlockedDto } from './dto/incident.dto';
-import * as moment from 'moment';
+import * as moment from 'moment-timezone';
 
 @Injectable()
 export class IncidentService {
