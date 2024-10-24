@@ -149,7 +149,7 @@ export class AuthService {
 
     // Verificar si el rol proporcionado en loginDto es correcto
     if (user.role !== role) {
-      throw new ForbiddenException(`Acceso denegado: El rol "(${role})" no coincide con el rol del usuario (${user.role})`);
+      throw new ForbiddenException(`Acceso denegado: El rol ${role} no coincide con el rol del usuario`);
     }
 
     user.sessionId = sessionId;
