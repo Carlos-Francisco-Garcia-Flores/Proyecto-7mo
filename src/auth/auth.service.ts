@@ -13,7 +13,7 @@ import { OtpService } from '../services/otp.service';
 import { PwnedService } from '../services/pwned.service';
 import { ZxcvbnService } from '../services/zxcvbn.service';
 import { IncidentService } from '../incident/incident.service';
-import * as moment from 'moment-timezone';
+const moment = require('moment-timezone');
 
 @Injectable()
 export class AuthService {
