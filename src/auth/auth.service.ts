@@ -144,7 +144,7 @@ export class AuthService {
 
     if (!isPasswordMatching || user.role !== role) {
       await this.incidentService.loginFailedAttempt(usuario);
-      throw new ForbiddenException(`Acceso denegado: Las credenciales o el rol selecionado son incorrectos`);
+      throw new ConflictException(`Acceso denegado: Las credenciales o el rol selecionado son incorrectos`);
 
     }
 
