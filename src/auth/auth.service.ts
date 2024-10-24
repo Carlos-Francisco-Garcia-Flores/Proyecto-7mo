@@ -13,6 +13,7 @@ import { OtpService } from '../services/otp.service';
 import { PwnedService } from '../services/pwned.service';
 import { ZxcvbnService } from '../services/zxcvbn.service';
 import { IncidentService } from '../incident/incident.service';
+import * as moment from 'moment-timezone';
 
 @Injectable()
 export class AuthService {
@@ -108,7 +109,7 @@ export class AuthService {
 
   // TODO: Login de usuario
   async login(loginDto: LoginDto): Promise<any> {
-    const { usuario, contraseña } = loginDto;
+    const { usuario, contraseña, role } = loginDto;
 
     // Generar una sessionID
     const sessionId = this.generateSessionID();
@@ -134,7 +135,7 @@ export class AuthService {
 
     if (userIncident && userIncident.isBlocked) {
       throw new ForbiddenException(
-        `Su cuenta ha sido bloqueada temporalmente. Podrá acceder nuevamente a las ${new Date(userIncident.blockExpiresAt).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}.`,
+        `Su cuenta ha sido bloqueada temporalmente. Podrá acceder nuevamente a las ${moment(userIncident.blockExpiresAt).tz('America/Mexico_City').format('HH:mm:ss')}.`
       );
     }
 
@@ -144,6 +145,11 @@ export class AuthService {
     if (!isPasswordMatching) {
       await this.incidentService.loginFailedAttempt(usuario);
       throw new ConflictException('Credenciales incorrectas');
+    }
+
+    // Verificar si el rol proporcionado en loginDto es correcto
+    if (user.role !== role) {
+      throw new ForbiddenException(`Acceso denegado: El rol "(${role})" no coincide con el rol del usuario (${user.role})`);
     }
 
     user.sessionId = sessionId;
