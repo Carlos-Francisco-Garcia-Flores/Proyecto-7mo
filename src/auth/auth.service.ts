@@ -142,15 +142,11 @@ export class AuthService {
     // Verificar si la contraseña es correcta
     const isPasswordMatching = await bcrypt.compare(contraseña, user.contraseña);
 
-    if (!isPasswordMatching) {
+    if (!isPasswordMatching || user.role !== role) {
       await this.incidentService.loginFailedAttempt(usuario);
-      throw new ConflictException('Credenciales incorrectas');
+      throw new ConflictException('Acceso denegado: Credenciales o rol incorrecto');
     }
-
-    // Verificar si el rol proporcionado en loginDto es correcto
-    if (user.role !== role) {
-      throw new ForbiddenException(`Acceso denegado: El rol ${role} no coincide con el rol del usuario`);
-    }
+  
 
     user.sessionId = sessionId;
     await user.save();
