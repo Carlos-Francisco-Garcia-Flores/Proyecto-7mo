@@ -21,14 +21,14 @@ export class DocumentoRegulatorioController {
     return documento;
   }
 
-  @UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos las rutas con autenticación JWT y Roles
+  @UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos la ruta con autenticación JWT y Roles
   @Roles('admin')  // Solo accesible para administradores
   @Post()
   async crearDocumento(@Body() dto: CrearDocumentoDto) {
     return await this.documentoService.crearDocumento(dto);
   }
 
-  @UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos las rutas con autenticación JWT y Roles
+  @UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos la ruta con autenticación JWT y Roles
   @Roles('admin')  // Permitimos a ambos roles ver documentos
   @Get()
   async obtenerDocumentos() {
@@ -38,14 +38,14 @@ export class DocumentoRegulatorioController {
   
  
 
-  @UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos las rutas con autenticación JWT y Roles
+  @UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos la ruta con autenticación JWT y Roles
   @Roles('admin')  // Solo accesible para administradores
   @Get('historial/:tipo')
   async obtenerHistorial(@Param('tipo') tipo: string) {
     return await this.documentoService.obtenerHistorialDeVersiones(tipo);
   }
 
-  @UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos las rutas con autenticación JWT y Roles
+  @UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos la ruta con autenticación JWT y Roles
   @Roles('admin')  // Solo accesible para administradores
   @Put(':id')
   async modificarDocumento(@Param('id') id: string, @Body() dto: ModificarDocumentoDto) {
@@ -58,7 +58,7 @@ export class DocumentoRegulatorioController {
     return documento;
   }
 
-  @UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos las rutas con autenticación JWT y Roles
+  @UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos la ruta con autenticación JWT y Roles
   @Roles('admin')  // Solo accesible para administradores
   @Patch(':id/eliminar')
   async eliminarDocumento(@Param('id') id: string) {
