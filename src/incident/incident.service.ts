@@ -65,10 +65,23 @@ export class IncidentService {
         ).exec();
     }
 
-    //TODO: Buscar si el usuario tiene bloqueada la cuenta
+    // Verificación si el usuario está bloqueado
     async usernameIsBlocked(usernameIsBlockedDto: UsernameIsBlockedDto): Promise<Incident> {
         const { usuario } = usernameIsBlockedDto;
         const incident = await this.incidentModel.findOne({ usuario });
+
+        if (incident) {
+            const now = new Date();
+
+            // Desbloquear si el tiempo de bloqueo ya ha pasado
+            if (incident.isBlocked && now >= incident.blockExpiresAt) {
+                incident.isBlocked = false;
+                incident.failedAttempts = 0;
+                incident.blockExpiresAt = null;
+                await incident.save();
+            }
+        }
+
         return incident;
     }
 }
