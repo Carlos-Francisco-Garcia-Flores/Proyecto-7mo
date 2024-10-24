@@ -133,10 +133,20 @@ export class AuthService {
     const userIncident = await this.incidentService.usernameIsBlocked({ usuario });
 
     if (userIncident && userIncident.isBlocked) {
+      // Convertir la hora de UTC a la zona horaria de México usando toLocaleString
+      const bloqueExpiresAtMexico = new Date(userIncident.blockExpiresAt).toLocaleString('es-MX', {
+        timeZone: 'America/Mexico_City',  // Zona horaria de México
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false,  // Formato de 24 horas
+      });
+
       throw new ForbiddenException(
-        `Su cuenta ha sido bloqueada temporalmente. Podrá acceder nuevamente a las ${new Date(userIncident.blockExpiresAt).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}.`,
+        `Su cuenta ha sido bloqueada temporalmente. Podrá acceder nuevamente a las ${bloqueExpiresAtMexico}.`,
       );
     }
+
 
     // Verificar si la contraseña es correcta
     const isPasswordMatching = await bcrypt.compare(contraseña, user.contraseña);
