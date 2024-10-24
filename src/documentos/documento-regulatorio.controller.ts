@@ -28,6 +28,7 @@ export class DocumentoRegulatorioController {
   @Roles('user', 'admin')  // Permitir acceso tanto a usuarios como administradores
   @Get('vigente/:tipo')
   async obtenerDocumentoVigente(@Param('tipo') tipo: string) {
+    console.log('Buscando documento del tipo:', tipo);  // Log para verificar el tipo recibido
     const documento = await this.documentoService.obtenerDocumentoVigente(tipo);
 
     if (!documento) {

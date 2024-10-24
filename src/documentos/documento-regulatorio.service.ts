@@ -3,7 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { DocumentoRegulatorio } from './schemas/documento-regulatorio.schema.ts';
 import { CrearDocumentoDto, ModificarDocumentoDto } from './dto/documento.dto';
-
+import * as moment from 'moment-timezone';
+  
 @Injectable()
 export class DocumentoRegulatorioService {
   constructor(
@@ -20,7 +21,7 @@ export class DocumentoRegulatorioService {
       version: '1.0',
       vigente: true,
       eliminado: false,
-      fechaCreacion: new Date(),
+      fechaCreacion: moment().tz('America/Mexico_City').toDate(),
     });
     return await nuevoDocumento.save();
   }
@@ -56,7 +57,7 @@ export class DocumentoRegulatorioService {
       version: incrementarVersion(documento.version),
       vigente: true,
       eliminado: false,
-      fechaCreacion: new Date(),
+      fechaCreacion: moment().tz('America/Mexico_City').toDate(),
     });
   
     return await nuevaVersion.save();
