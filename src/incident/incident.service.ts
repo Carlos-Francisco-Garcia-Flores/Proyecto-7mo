@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Incident, IncidentDocument } from './schemas/incident.schema';
 import { CloseIncidentDto, UsernameIsBlockedDto } from './dto/incident.dto';
-import * as moment from 'moment-timezone';
 
 @Injectable()
 export class IncidentService {
@@ -12,44 +11,36 @@ export class IncidentService {
     // TODO: Registrar una nueva incidencia
     async loginFailedAttempt(usuario: string): Promise<Incident> {
         const incident = await this.incidentModel.findOne({ usuario });
-    
-        // Obtener la hora actual en la zona horaria de México
-        const now = moment().tz('America/Mexico_City').toDate();
-    
-        if (incident) {
 
-            // Si la cuenta ya está bloqueada y el tiempo actual es menor a la fecha de expiración del bloqueo
+        if (incident) {
+            const now = new Date();
+
             if (incident.isBlocked && now < incident.blockExpiresAt) {
-                const bloqueoEnMexico = moment(incident.blockExpiresAt).tz('America/Mexico_City').format('YYYY-MM-DD HH:mm:ss');
                 throw new ForbiddenException(
-                    `La cuenta está bloqueada. Inténtalo nuevamente después de ${bloqueoEnMexico}`
-                );
+                    `La cuenta esta bloqueada. Intentalo nuevamente despues de ${new Date(incident.blockExpiresAt).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}`
+                )
             }
-    
-            // Si el tiempo actual es mayor o igual a la fecha de expiración del bloqueo, desbloquear la cuenta
+
             if (incident.isBlocked && now >= incident.blockExpiresAt) {
                 incident.failedAttempts = 0;  // Reiniciar contador
                 incident.isBlocked = false;   // Desbloquear cuenta
                 incident.blockExpiresAt = null; // Limpiar fecha de bloqueo
             }
-    
-            // Incrementar intentos fallidos
+
             incident.failedAttempts += 1;
-            incident.lastAttempt = now;  // Registrar el intento con la hora de México
-    
-            // Si los intentos fallidos exceden 5, bloquear la cuenta por 20 minutos
+            incident.lastAttempt = now;
+
             if (incident.failedAttempts > 5) {
                 incident.isBlocked = true;
-                incident.blockExpiresAt = moment().tz('America/Mexico_City').add(20, 'minutes').toDate();  // Bloquear por 20 minutos
+                incident.blockExpiresAt = new Date(now.getTime() + 20 * 60 * 1000);
             }
-    
+
             return incident.save();
         } else {
-            // Si no existe un incidente previo, crear uno nuevo
             const newIncident = new this.incidentModel({
                 usuario: usuario,
                 failedAttempts: 1,
-                lastAttempt: now,  // Usar la hora de México para la fecha del intento
+                lastAttempt: new Date(),
             });
             return newIncident.save();
         }
