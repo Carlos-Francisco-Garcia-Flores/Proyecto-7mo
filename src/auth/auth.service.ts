@@ -149,7 +149,7 @@ export class AuthService {
     user.sessionId = sessionId;
     await user.save();
 
-    const payload = { username: user.usuario, sub: user.id };
+    const payload = { username: user.usuario, sub: user.id, role: user.role };
     const token = this.jwtService.sign(payload);
 
     return {

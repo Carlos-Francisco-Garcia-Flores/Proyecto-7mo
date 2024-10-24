@@ -11,6 +11,7 @@ import { OtpService } from '../services/otp.service';
 import { PwnedService } from '../services/pwned.service';
 import { ZxcvbnService } from '../services/zxcvbn.service';
 import { IncidentModule } from '../incident/incident.module';
+import { JwtStrategy } from '../common/strategies/jwt.strategy';  // Importar JwtStrategy
 
 @Module({
   imports: [
@@ -24,8 +25,8 @@ import { IncidentModule } from '../incident/incident.module';
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'), // Asegúrate de que la clave esté configurada
-        signOptions: { expiresIn: '1h' }, // Configuración de expiración del token
+        secret: configService.get<string>('JWT_SECRET'),  // Obtener la clave secreta desde variables de entorno
+        signOptions: { expiresIn: '1h' },  // El token expira en 1 hora
       }),
       inject: [ConfigService],
     }),
@@ -38,7 +39,8 @@ import { IncidentModule } from '../incident/incident.module';
     PwnedService,
     ZxcvbnService,
     OtpService,
+    JwtStrategy,  
   ],
-  exports: [AuthService],
+  exports: [AuthService, JwtModule],  // Exportando JwtModule si otros módulos necesitan generar/verificar tokens
 })
 export class AuthModule {}

@@ -2,7 +2,7 @@ import { Module, MiddlewareConsumer, NestModule, RequestMethod } from '@nestjs/c
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UsuariosModule } from './usuarios/usuarios.module';
-import { InformacionModule } from './informacion/informacion.module';
+import { DocumentoRegulatorioModule } from './documentos/documento-regulatorio.module';
 import { CorsMiddleware } from './cors.middleware';
 import { AuthModule } from './auth/auth.module';
 import { IncidentModule } from './incident/incident.module';
@@ -20,7 +20,7 @@ import { IncidentModule } from './incident/incident.module';
       inject: [ConfigService],
     }),
     UsuariosModule,
-    InformacionModule,
+    DocumentoRegulatorioModule,
     AuthModule,
     IncidentModule,
   ],

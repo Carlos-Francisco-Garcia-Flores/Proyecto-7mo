@@ -1,17 +1,30 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { ROLES_KEY } from '../decorators/roles.decorator';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredRoles = this.reflector.get<string[]>(ROLES_KEY, context.getHandler());
+    const requiredRoles = this.reflector.get<string[]>('roles', context.getHandler());
+
     if (!requiredRoles) {
       return true;
     }
-    const { user } = context.switchToHttp().getRequest();
-    return requiredRoles.some((role) => user.roles?.includes(role));
+
+    const request = context.switchToHttp().getRequest();
+    const user = request.user;
+
+    // Agregar logs para depuración
+    console.log('Roles requeridos:', requiredRoles);
+    console.log('Rol del usuario:', user?.role);
+
+    if (!user || !user.role || !requiredRoles.includes(user.role)) {
+      console.error('Acceso denegado. Rol insuficiente.');
+      throw new ForbiddenException('Forbidden resource');
+    }
+
+    console.log('Acceso permitido. Rol válido.');
+    return true;
   }
 }
