@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Post, Res, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ForgotPasswordDto, ResetPasswordDto } from './dto/resetPassword.dto';
 import { RegisterDto, ActivationDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
+import { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -19,8 +20,8 @@ export class AuthController {
   }
 
   @Post('forgot/password')
-  async forgot_password(@Body() forgotPassworDto: ForgotPasswordDto) {
-    return await this.authService.forgot_password(forgotPassworDto);
+  async forgot_password(@Body() forgotPasswordDto: ForgotPasswordDto) {
+    return await this.authService.forgot_password(forgotPasswordDto);
   }
 
   @Post('reset/password')
@@ -32,6 +33,5 @@ export class AuthController {
   async verify_email(@Body() activationDto: ActivationDto) {
     return await this.authService.verify_email(activationDto);
   }
-  
 
 }

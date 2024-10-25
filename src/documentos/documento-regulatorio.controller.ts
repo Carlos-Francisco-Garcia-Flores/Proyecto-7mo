@@ -29,7 +29,7 @@ export class DocumentoRegulatorioController {
   }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos la ruta con autenticación JWT y Roles
-  @Roles('admin')  // Permitimos a ambos roles ver documentos
+  @Roles('admin')  // Solo accesible para administradores
   @Get()
   async obtenerDocumentos() {
     return await this.documentoService.obtenerDocumentos();
