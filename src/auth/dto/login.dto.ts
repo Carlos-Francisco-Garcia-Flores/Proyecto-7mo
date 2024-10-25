@@ -10,7 +10,4 @@ export class LoginDto {
     @IsNotEmpty({ message: "Por favor, ingrese su contraseña "})
     contraseña: string;
 
-    @Prop({ required: true })
-    @IsNotEmpty({ message: "Por favor, ingrese el tipo de usuario "})
-    role: string;
 }

@@ -108,7 +108,7 @@ export class AuthService {
 
   // TODO: Login de usuario
   async login(loginDto: LoginDto): Promise<any> {
-    const { usuario, contraseña, role } = loginDto;
+    const { usuario, contraseña } = loginDto;
 
     // Generar una sessionID
     const sessionId = this.generateSessionID();
@@ -151,9 +151,9 @@ export class AuthService {
     // Verificar si la contraseña es correcta
     const isPasswordMatching = await bcrypt.compare(contraseña, user.contraseña);
 
-    if (!isPasswordMatching || user.role !== role) {
+    if (!isPasswordMatching) {
       await this.incidentService.loginFailedAttempt(usuario);
-      throw new ConflictException('Acceso denegado: Las credenciales o el rol selecionado son incorrectos');
+      throw new ConflictException('Acceso denegado: Las credenciales incorrectas');
     }
   
 
