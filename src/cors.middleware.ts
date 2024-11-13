@@ -1,11 +1,16 @@
-
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 
 @Injectable()
 export class CorsMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
-    res.header('Access-Control-Allow-Origin', '*'); 
+    const allowedOrigins = ['http://localhost:5173', 'https://tu-dominio-de-produccion.com']; // Dominios permitidos
+    const origin = req.headers.origin as string;
+
+    if (allowedOrigins.includes(origin)) {
+      res.header('Access-Control-Allow-Origin', origin); // Establece el origen específico
+    }
+
     res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization, Content-Disposition');
     res.header('Access-Control-Allow-Credentials', 'true');
@@ -13,6 +18,7 @@ export class CorsMiddleware implements NestMiddleware {
     if (req.method === 'OPTIONS') {
       return res.sendStatus(200);
     }
+
     next();
   }
 }
