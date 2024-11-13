@@ -6,6 +6,7 @@ import { DocumentoRegulatorioModule } from './documentos/documento-regulatorio.m
 import { CorsMiddleware } from './cors.middleware';
 import { AuthModule } from './auth/auth.module';
 import { IncidentModule } from './incident/incident.module';
+import { SocialModule } from './social/social.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { IncidentModule } from './incident/incident.module';
     DocumentoRegulatorioModule,
     AuthModule,
     IncidentModule,
+    SocialModule,
   ],
 })
 export class AppModule implements NestModule {

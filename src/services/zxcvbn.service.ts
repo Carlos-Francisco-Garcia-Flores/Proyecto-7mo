@@ -8,8 +8,8 @@ export class ZxcvbnService {
       const result = zxcvbn(password);
       console.log('Resultado de zxcvbn:', result);
 
-      // Si la puntuación es menor a 3, consideramos la contraseña débil
-      if (result.score < 3) {
+      // Si la puntuación es menor a 2, consideramos la contraseña débil
+      if (result.score < 2) {
         return result;
       }
 
