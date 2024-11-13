@@ -13,6 +13,9 @@ import { OtpService } from '../services/otp.service';
 import { PwnedService } from '../services/pwned.service';
 import { ZxcvbnService } from '../services/zxcvbn.service';
 import { IncidentService } from '../incident/incident.service';
+import { Response } from 'express'; 
+import { Res } from '@nestjs/common';
+
 
 @Injectable()
 export class AuthService {
@@ -107,76 +110,53 @@ export class AuthService {
   
 
   // TODO: Login de usuario
-  async login(loginDto: LoginDto): Promise<any> {
+  async login(loginDto: LoginDto): Promise<{ token: string }> {
     const { usuario, contraseña } = loginDto;
-
-    // Generar una sessionID
+  
     const sessionId = this.generateSessionID();
-
-    // Primero asegurarse de que el usuario exista
     const user = await this.userModel.findOne({ usuario });
-
+  
     if (!user) {
       throw new ConflictException(
         `El usuario ${usuario} no está registrado, por favor regístrese`,
       );
     }
-
-    // Si el usuario no ha verificado su cuenta
+  
     if (!user.estado) {
       throw new ForbiddenException(
         'Estimado usuario, le solicitamos que verifique su cuenta para habilitar el acceso a nuestros servicios.',
       );
     }
-
-    // Verificar si el usuario tiene un incidente (bloqueado)
+  
     const userIncident = await this.incidentService.usernameIsBlocked({ usuario });
-
     if (userIncident && userIncident.isBlocked) {
-      // Convertir la hora de UTC a la zona horaria de México usando toLocaleString
       const bloqueExpiresAtMexico = new Date(userIncident.blockExpiresAt).toLocaleString('es-MX', {
-        timeZone: 'America/Mexico_City',  // Zona horaria de México
+        timeZone: 'America/Mexico_City',
         hour: '2-digit',
         minute: '2-digit',
         second: '2-digit',
-        hour12: false,  // Formato de 24 horas
+        hour12: false,
       });
-
+  
       throw new ForbiddenException(
         `Su cuenta ha sido bloqueada temporalmente. Podrá acceder nuevamente a las ${bloqueExpiresAtMexico}.`,
       );
     }
-
-
-    // Verificar si la contraseña es correcta
+  
     const isPasswordMatching = await bcrypt.compare(contraseña, user.contraseña);
-
+  
     if (!isPasswordMatching) {
       await this.incidentService.loginFailedAttempt(usuario);
       throw new ConflictException('Acceso denegado: Las credenciales incorrectas');
     }
   
-
     user.sessionId = sessionId;
     await user.save();
-
+  
     const payload = { username: user.usuario, sub: user.id, role: user.role };
     const token = this.jwtService.sign(payload);
-
-    return {
-      status: HttpStatus.OK,
-      message: 'Sesión iniciada exitosamente',
-      token: token,
-    };
-  }
-
-  // TODO: Cerrar Sesión
-  async logout(userId: string): Promise<any> {
-    await this.revokeSessions(userId);
-    return {
-      status: HttpStatus.OK,
-      message: 'Sesión cerrada exitosamente',
-    };
+  
+    return { token };
   }
 
   // TODO: Olvidar Contraseña

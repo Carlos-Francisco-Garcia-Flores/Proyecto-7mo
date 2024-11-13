@@ -1,4 +1,6 @@
 const cookieSession = require('cookie-session');
+import * as cookieParser from 'cookie-parser';
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
@@ -10,6 +12,9 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const configService = app.get(ConfigService);
+
+
+  app.use(cookieParser());  // Habilitar cookie-parser para leer cookies
 
   app.useGlobalPipes(new ValidationPipe());
 

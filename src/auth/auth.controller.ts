@@ -10,8 +10,21 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  async login(@Body() loginDto: LoginDto) {
-    return await this.authService.login(loginDto);
+  async login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res: Response) {
+    const { token } = await this.authService.login(loginDto);
+
+    // Configurar la cookie con el token
+    res.cookie('auth_token', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      maxAge: 3600000,  // 1 hora
+    });
+
+    return {
+      status: HttpStatus.OK,
+      message: 'Sesión iniciada exitosamente',
+    };
   }
 
   @Post('register')
