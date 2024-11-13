@@ -1,11 +1,10 @@
-import { Body, Controller, Get, Req, Post, Res, HttpStatus, UseGuards} from '@nestjs/common';
+import { Body, Controller, Get, Req, Post, Res, HttpStatus} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ForgotPasswordDto, ResetPasswordDto } from './dto/resetPassword.dto';
 import { RegisterDto, ActivationDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { Response } from 'express';
 import { Request } from 'express';
-import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
@@ -33,7 +32,6 @@ export class AuthController {
   }
 
 
-   @UseGuards(AuthGuard('jwt')) 
    @Get('user')
     getUser(@Req() req: Request) {
       const user = req.user; // Obtén los datos del usuario desde el request
