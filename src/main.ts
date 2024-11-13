@@ -1,4 +1,3 @@
-const cookieSession = require('cookie-session');
 import * as cookieParser from 'cookie-parser';
 
 import { NestFactory } from '@nestjs/core';
@@ -16,29 +15,21 @@ async function bootstrap() {
 
   app.use(cookieParser());  // Habilitar cookie-parser para leer cookies
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true
+  }));
+
 
   app.use(helmet());
 
-  app.use(
-    cookieSession({
-      name: 'session',
-      keys: [
-        configService.get<string>("MASTER_COOKIE_KEY_V1"),
-        configService.get<string>("MASTER_COOKIE_KEY_V2")
-      ],
-      cookie: {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'strict',
-        maxAge: 3600000
-      }
-    })
-  );
+
 
   mongoose.set('sanitizeFilter', true);
 
   await app.listen(configService.get<number>("PORT"));
+  console.log(`Listen in http://localhost:${configService.get<number>("PORT")}`,);
+
 }
 
 bootstrap();
