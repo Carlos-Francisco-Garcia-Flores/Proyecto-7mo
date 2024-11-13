@@ -1,10 +1,10 @@
-import cookieParser from 'cookie-parser';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import mongoose from 'mongoose';
 import helmet from 'helmet';
+import cookieParse from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -12,7 +12,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
 
 
-  app.use(cookieParser());  // Habilitar cookie-parser para leer cookies
+  app.use(cookieParse());
 
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
