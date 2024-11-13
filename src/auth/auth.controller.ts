@@ -1,14 +1,18 @@
-import { Body, Controller, Post, Res, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Get, Req, Post, Res, HttpStatus } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ForgotPasswordDto, ResetPasswordDto } from './dto/resetPassword.dto';
 import { RegisterDto, ActivationDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { Response } from 'express';
+import { Request } from 'express';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+
+
+  
   @Post('login')
   async login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res: Response) {
     const { token } = await this.authService.login(loginDto);
@@ -24,6 +28,15 @@ export class AuthController {
     return {
       status: HttpStatus.OK,
       message: 'Sesión iniciada exitosamente',
+    };
+  }
+
+   @Get('user')
+  getUser(@Req() req: Request) {
+    const user = req.user; // Obtén los datos del usuario desde el request
+    return {
+      username: user.username,
+      role: user.role,
     };
   }
 
