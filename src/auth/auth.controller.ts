@@ -1,14 +1,35 @@
-import { Body, Controller, Post, Res, HttpStatus} from '@nestjs/common';
+import { Body, Controller, Post, Res, HttpStatus,  Get, Req, UnauthorizedException} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ForgotPasswordDto, ResetPasswordDto } from './dto/resetPassword.dto';
 import { RegisterDto, ActivationDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { Response } from 'express';
+import { Request } from 'express';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService,
+    private readonly jwtService: JwtService ) {}
 
+
+  @Get('user')
+  getUser(@Req() req: Request) {
+    const authToken = req.cookies['auth_token'];
+    if (!authToken) {
+      throw new UnauthorizedException('No hay token de autenticación');
+    }
+
+    try {
+      const decodedToken = this.jwtService.verify(authToken);
+      return {
+        username: decodedToken.username,
+        role: decodedToken.role,
+      };
+    } catch (error) {
+      throw new UnauthorizedException('Token inválido o expirado');
+    }
+  }
 
 
   
