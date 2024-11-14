@@ -68,4 +68,15 @@ export class AuthController {
     return await this.authService.verify_email(activationDto);
   }
 
+
+  @Get('validate-session')
+  async validateSession(@Req() req: Request, @Res() res: Response) {
+    try {
+      const userData = await this.authService.validateSessionjwt(req);
+      return res.status(200).json({ message: 'Sesión válida', role: userData.role });
+    } catch (error) {
+      throw new UnauthorizedException('Sesión inválida.');
+    }
+  }
+
 }

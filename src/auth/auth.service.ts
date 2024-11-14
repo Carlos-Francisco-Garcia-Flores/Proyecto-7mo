@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt';
-import { BadRequestException, ConflictException, ForbiddenException, Injectable, HttpStatus } from '@nestjs/common';
+import { BadRequestException, ConflictException, ForbiddenException, Injectable, HttpStatus , UnauthorizedException} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Usuarios, UserDocument } from './schemas/user.schema';
@@ -15,6 +15,8 @@ import { ZxcvbnService } from '../services/zxcvbn.service';
 import { IncidentService } from '../incident/incident.service';
 import { Response } from 'express'; 
 import { Res } from '@nestjs/common';
+import * as jwt from 'jsonwebtoken';
+import { Request } from 'express';
 
 
 @Injectable()
@@ -235,5 +237,20 @@ export class AuthService {
   private async revokeSessions(userId: string): Promise<any> {
     await this.userModel.updateOne({ _id: userId }, { $unset: { sessionId: '' } });
     return { message: 'Todas las sesiones han sido revocadas.' };
+  }
+
+  async validateSessionjwt(req: Request): Promise<any> {
+    const token = req.cookies['jwt'];
+
+    if (!token) {
+      throw new UnauthorizedException('No hay token en la cookie.');
+    }
+
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      return decoded;
+    } catch (err) {
+      throw new UnauthorizedException('Token inválido o expirado.');
+    }
   }
 }
