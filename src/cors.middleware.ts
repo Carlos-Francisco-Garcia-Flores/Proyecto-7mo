@@ -4,7 +4,7 @@ import { Request, Response, NextFunction } from 'express';
 @Injectable()
 export class CorsMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
-    const allowedOrigins = ['http://localhost:5173', 'https://tu-dominio-de-produccion.com']; // Dominios permitidos
+    const allowedOrigins = ['http://localhost:5173', 'https://orangered-ape-514605.hostingersite.com']; // Dominios permitidos
     const origin = req.headers.origin as string;
 
     if (allowedOrigins.includes(origin)) {
