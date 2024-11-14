@@ -5,15 +5,12 @@ import { ConfigService } from '@nestjs/config';
 import mongoose from 'mongoose';
 import helmet from 'helmet';
 import cookieParse from 'cookie-parser';
-import { CorsMiddleware } from './cors.middleware';
+import xss from 'xss-clean';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const configService = app.get(ConfigService);
-
-  
-  app.use(new CorsMiddleware().use);
 
 
   app.use(cookieParse());
@@ -23,9 +20,10 @@ async function bootstrap() {
     forbidNonWhitelisted: true
   }));
 
+  app.use(xss()); 
+
 
   app.use(helmet());
-
 
 
   mongoose.set('sanitizeFilter', true);

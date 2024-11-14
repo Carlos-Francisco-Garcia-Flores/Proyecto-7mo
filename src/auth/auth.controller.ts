@@ -9,48 +9,44 @@ import { JwtService } from '@nestjs/jwt';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService,
-    private readonly jwtService: JwtService ) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly jwtService: JwtService 
+  ) {}
 
 
-  @Get('user')
-  getUser(@Req() req: Request) {
-    const authToken = req.cookies['auth_token'];
-    if (!authToken) {
-      throw new UnauthorizedException('No hay token de autenticación');
-    }
-
-    try {
-      const decodedToken = this.jwtService.verify(authToken);
-      return {
-        username: decodedToken.username,
-        role: decodedToken.role,
-      };
-    } catch (error) {
-      throw new UnauthorizedException('Token inválido o expirado');
-    }
-  }
-
-
+    @Post('login')
+    async login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res: Response) {
+      const { token } = await this.authService.login(loginDto);
   
-  @Post('login')
-  async login(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res: Response) {
-    const { token } = await this.authService.login(loginDto);
-
-    // Configurar la cookie con el token
-    res.cookie('auth_token', token, {
-      httpOnly: true,
-      secure: false,
-      sameSite: 'none',
-      maxAge: 3600000,  // 1 hora
-      path: '/',
-    });
-
-    return {
-      status: HttpStatus.OK,
-      message: 'Sesión iniciada exitosamente',
-    };
-  }
+      res.cookie('auth_token', token, {
+        httpOnly: true,
+        secure: false,
+        sameSite: 'none', 
+        maxAge: 3600000,
+        path: '/',
+      });
+  
+      return {
+        status: HttpStatus.OK,
+        message: 'Sesión iniciada exitosamente',
+      };
+    }
+  
+    @Get('user')
+    getUser(@Req() req: Request) {
+      const authToken = req.cookies['auth_token'];
+      if (!authToken) {
+        throw new UnauthorizedException('No hay token de autenticación');
+      }
+  
+      try {
+        const decodedToken = this.jwtService.verify(authToken);
+        return { username: decodedToken.username, role: decodedToken.role };
+      } catch (error) {
+        throw new UnauthorizedException('Token inválido o expirado');
+      }
+    }
 
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
