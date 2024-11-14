@@ -240,7 +240,7 @@ export class AuthService {
   }
 
   async validateSessionjwt(req: Request): Promise<any> {
-    const token = req.cookies['jwt'];
+    const token = req.cookies['auth_token'];
 
     if (!token) {
       throw new UnauthorizedException('No hay token en la cookie.');

@@ -21,8 +21,8 @@ export class AuthController {
   
       res.cookie('auth_token', token, {
         httpOnly: true,
-        secure: true,
-        sameSite: 'none', 
+        secure: false,
+        sameSite: 'lax', 
         maxAge: 3600000,
         path: '/',
       });
@@ -36,6 +36,7 @@ export class AuthController {
     @Get('validate-user')
   async validateSession(@Req() req: Request, @Res() res: Response) {
     const token = req.cookies['auth_token'];
+    console.log (req.cookies);
     if (!token) {
       throw new UnauthorizedException('No hay token en la cookie.');
     }
