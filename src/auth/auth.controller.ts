@@ -40,9 +40,10 @@ export class AuthController {
     // Configurar la cookie con el token
     res.cookie('auth_token', token, {
       httpOnly: true,
-      secure: true,
-      sameSite: 'none',
+      secure: false,
+      sameSite: 'strict',
       maxAge: 3600000,  // 1 hora
+      path: '/',
     });
 
     return {
