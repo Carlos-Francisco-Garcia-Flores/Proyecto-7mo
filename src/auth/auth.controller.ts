@@ -33,20 +33,21 @@ export class AuthController {
       };
     }
   
-    @Get('user')
-    getUser(@Req() req: Request) {
-      const authToken = req.cookies['auth_token'];
-      if (!authToken) {
-        throw new UnauthorizedException('No hay token de autenticación');
-      }
-  
-      try {
-        const decodedToken = this.jwtService.verify(authToken);
-        return { username: decodedToken.username, role: decodedToken.role };
-      } catch (error) {
-        throw new UnauthorizedException('Token inválido o expirado');
-      }
+    @Get('validate-user')
+  async validateSession(@Req() req: Request, @Res() res: Response) {
+    const token = req.cookies['auth_token'];
+    if (!token) {
+      throw new UnauthorizedException('No hay token en la cookie.');
     }
+
+    try {
+      // Verificar el token en la cookie
+      const decoded = this.jwtService.verify(token);
+      return res.status(200).json({ message: 'Sesión válida', role: decoded.role });
+    } catch (error) {
+      throw new UnauthorizedException('Token inválido o expirado.');
+    }
+  }
 
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
@@ -69,14 +70,7 @@ export class AuthController {
   }
 
 
-  @Get('validate-session')
-  async validateSession(@Req() req: Request, @Res() res: Response) {
-    try {
-      const userData = await this.authService.validateSessionjwt(req);
-      return res.status(200).json({ message: 'Sesión válida', role: userData.role });
-    } catch (error) {
-      throw new UnauthorizedException('Sesión inválida.');
-    }
-  }
+  
+
 
 }
