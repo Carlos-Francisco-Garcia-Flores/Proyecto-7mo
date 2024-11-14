@@ -25,6 +25,10 @@ async function bootstrap() {
 
   app.use(helmet());
 
+  app.enableCors({
+  origin: ['http://localhost:5173', 'https://orangered-ape-514605.hostingersite.com'], // Permite el dominio del frontend
+    credentials: true
+  });
 
   mongoose.set('sanitizeFilter', true);
 
