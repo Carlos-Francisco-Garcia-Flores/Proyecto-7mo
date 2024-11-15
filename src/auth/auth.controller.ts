@@ -33,7 +33,7 @@ export class AuthController {
       };
     }
   
-    @Get('validate-user')
+  @Get('validate-user')
   async validateSession(@Req() req: Request, @Res() res: Response) {
     const token = req.cookies['auth_token'];
     console.log (req.cookies);
