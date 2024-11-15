@@ -239,6 +239,10 @@ export class AuthService {
     return { message: 'Todas las sesiones han sido revocadas.' };
   }
 
+  async logout(): Promise<{ message: string }> {
+    return { message: 'Sesión cerrada exitosamente' };
+  }
+
   async validateSessionjwt(req: Request): Promise<any> {
     const token = req.cookies['auth_token'];
 

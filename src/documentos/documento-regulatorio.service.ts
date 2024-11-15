@@ -1,82 +1,79 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { DocumentoRegulatorio } from './schemas/documento-regulatorio.schema.ts';
-import { CrearDocumentoDto, ModificarDocumentoDto } from './dto/documento.dto';
-  
+import { CreateDocumentoDto, UpdateDocumentoDto } from './dto/documento.dto';
+
 @Injectable()
 export class DocumentoRegulatorioService {
   constructor(
-    @InjectModel('DocumentoRegulatorio') private readonly documentoModel: Model<DocumentoRegulatorio>
+    @InjectModel(DocumentoRegulatorio.name) private documentoModel: Model<DocumentoRegulatorio>,
   ) {}
 
-  // Crear un nuevo documento regulatorio
-  async crearDocumento(dto: CrearDocumentoDto): Promise<DocumentoRegulatorio> {
-    const nuevoDocumento = new this.documentoModel({
-      tipo: dto.tipo,
-      descripcion: dto.descripcion,
-      fechaInicio: dto.fechaInicio,
-      fechaFin: dto.fechaFin,
-      version: '1.0',
-      vigente: true,
-      eliminado: false,
-      fechaCreacion: new Date(),
-    });
-    return await nuevoDocumento.save();
+  private incrementVersion(version: string): string {
+    const [major] = version.split('.').map(Number);
+    return `${major + 1}.0`;
   }
 
-  // Obtener todos los documentos no eliminados
-  async obtenerDocumentos(): Promise<DocumentoRegulatorio[]> {
+  async createDocumento(createDocumentoDto: CreateDocumentoDto): Promise<DocumentoRegulatorio> {
+    const { tipo } = createDocumentoDto;
+
+    // Cambia cualquier documento vigente del mismo tipo a no vigente
+    await this.documentoModel.updateMany({ tipo, vigente: true }, { vigente: false });
+
+    const nuevoDocumento = new this.documentoModel({
+      ...createDocumentoDto,
+      version: '1.0',
+      fechaInicio: createDocumentoDto.fechaInicio || new Date(),
+      vigente: true,
+      eliminado: false,
+    });
+
+    return nuevoDocumento.save();
+  }
+
+  async getAllDocumentos(): Promise<DocumentoRegulatorio[]> {
     return this.documentoModel.find({ eliminado: false }).exec();
   }
 
-  // Obtener la versión vigente de un documento
-  async obtenerDocumentoVigente(tipo: string): Promise<DocumentoRegulatorio> {
-    return this.documentoModel.findOne({ tipo, vigente: true, eliminado: false }).exec();
-  }
-
-  // Obtener el historial completo de versiones de un documento
-  async obtenerHistorialDeVersiones(tipo: string): Promise<DocumentoRegulatorio[]> {
-    return this.documentoModel.find({ tipo }).sort({ fechaCreacion: -1 }).exec();
-  }
-
-  // Modificar un documento, creando una nueva versión
-  async modificarDocumento(id: string, dto: ModificarDocumentoDto): Promise<DocumentoRegulatorio> {
-    const documento = await this.documentoModel.findById(id).exec();  
+  // Método para obtener un documento por ID
+  async obtenerDocumentoPorId(id: string): Promise<DocumentoRegulatorio> {
+    const documento = await this.documentoModel.findById(id).exec();
     if (!documento) {
-      throw new NotFoundException('Documento no encontrado');
+      throw new NotFoundException(`Documento con ID ${id} no encontrado`);
     }
-  
-    // Accedemos correctamente a fechaInicio en un documento plano
-    const nuevaVersion = new this.documentoModel({
-      tipo: documento.tipo,
-      descripcion: dto.descripcion,
-      fechaInicio: documento.fechaInicio, 
-      fechaFin: dto.fechaFin || documento.fechaFin,
-      version: incrementarVersion(documento.version),
-      vigente: true,
-      eliminado: false,
-      fechaCreacion: Date.now(),
-    });
-  
-    return await nuevaVersion.save();
+    return documento;
   }
 
-  // Eliminar documento lógicamente (no borrar físicamente)
-  async eliminarDocumento(id: string): Promise<DocumentoRegulatorio> {
+  async updateDocumento(id: string, updateDocumentoDto: UpdateDocumentoDto): Promise<DocumentoRegulatorio> {
     const documento = await this.documentoModel.findById(id);
-
     if (!documento) {
-      throw new NotFoundException('Documento no encontrado');
+      throw new NotFoundException(`Documento con ID: ${id} no encontrado`);
     }
 
-    documento.eliminado = true;
-    return await documento.save();
-  }
-}
+    
 
-// Función auxiliar para incrementar la versión
-function incrementarVersion(version: string): string {
-  const [major, minor] = version.split('.').map(Number);
-  return `${major}.${minor + 1}`;
+    // Desactivar el documento vigente actual
+    documento.vigente = false;
+    await documento.save();
+
+    const nuevaVersion = new this.documentoModel({
+      ...documento.toObject(),
+      ...updateDocumentoDto,
+      version: this.incrementVersion(documento.version),
+      _id: undefined,
+      vigente: true,
+    });
+
+    return nuevaVersion.save();
+  }
+
+  async deleteDocumento(id: string): Promise<DocumentoRegulatorio> {
+    const documento = await this.documentoModel.findById(id);
+    if (!documento) {
+      throw new NotFoundException(`Documento con ID: ${id} no encontrado`);
+    }
+    documento.eliminado = true;
+    return documento.save();
+  }
 }

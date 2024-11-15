@@ -1,25 +1,29 @@
-import { Schema, Document, model } from 'mongoose';
+// src/documentos-regulatorios/schemas/documento-regulatorio.schema.ts
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from 'mongoose';
 
-export interface DocumentoRegulatorio extends Document {
-  tipo: string;            // Tipo del documento (ej: Política de privacidad, Términos y condiciones)
-  descripcion: string;      // Contenido o descripción del documento
-  version: string;          // Versión del documento (ej: 1.0, 1.1)
+@Schema()
+export class DocumentoRegulatorio extends Document {
+  @Prop({ required: true })
+  tipo: string;
+
+  @Prop({ required: true })
+  descripcion: string;
+
+  @Prop({ required: true })
+  version: string;
+
+  @Prop({ required: true })
   fechaInicio: Date;
-  fechaCreacion: Date; 
-  fechaFin: Date ;           // Fecha de creación
-  vigente: boolean;         // Si el documento está vigente o no
-  eliminado: boolean;       // Si el documento está eliminado (eliminación lógica)
+
+  @Prop({ default: null })
+  fechaFin: Date;
+
+  @Prop({ default: false })
+  vigente: boolean;
+
+  @Prop({ default: false })
+  eliminado: boolean;
 }
 
-export const DocumentoRegulatorioSchema = new Schema({
-  tipo: { type: String, required: true },
-  descripcion: { type: String, required: true },
-  version: { type: String, required: true, default: '1.0' },
-  fechaCreacion: { type: Date, default: Date.now },
-  fechaInicio: { type: Date, required: true },  // Asegúrate de que esté correctamente definido
-  fechaFin: { type: Date },  // Define fechaFin como opcional
-  vigente: { type: Boolean, default: true },
-  eliminado: { type: Boolean, default: false },
-});
-
-export const DocumentoRegulatorioModel = model<DocumentoRegulatorio>('DocumentoRegulatorio', DocumentoRegulatorioSchema);
+export const DocumentoRegulatorioSchema = SchemaFactory.createForClass(DocumentoRegulatorio);

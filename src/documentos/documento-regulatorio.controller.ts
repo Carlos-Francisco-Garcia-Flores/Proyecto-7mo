@@ -1,73 +1,51 @@
-import { Controller, Post, Get, Put, Patch, Param, Body, UseGuards, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Param, Body, NotFoundException, UseGuards } from '@nestjs/common';
 import { DocumentoRegulatorioService } from './documento-regulatorio.service';
-import { CrearDocumentoDto, ModificarDocumentoDto } from './dto/documento.dto';
-import { Roles } from '../common/decorators/roles.decorator';
-import { RolesGuard } from '../common/guards/roles.guard';
+import { CreateDocumentoDto, UpdateDocumentoDto } from './dto/documento.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { RolesGuard } from '../common/guards/roles.guard';
+import { Roles } from '../common/decorators/roles.decorator';
 
-@Controller('documento-regulatorio')
+@Controller('documentos')
 export class DocumentoRegulatorioController {
   constructor(private readonly documentoService: DocumentoRegulatorioService) {}
 
-  @Get('vigente/:tipo')
-  async obtenerDocumentoVigente(@Param('tipo') tipo: string) {
-    console.log('Buscando documento del tipo:', tipo);  // Log para verificar el tipo recibido
-    const documento = await this.documentoService.obtenerDocumentoVigente(tipo);
 
-    if (!documento) {
-      throw new NotFoundException('No hay versiones vigentes para este documento');
-    }
-
-    return documento;
-  }
-
-  @UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos la ruta con autenticación JWT y Roles
-  @Roles('admin')  // Solo accesible para administradores
-  @Post()
-  async crearDocumento(@Body() dto: CrearDocumentoDto) {
-    return await this.documentoService.crearDocumento(dto);
-  }
-
-  @UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos la ruta con autenticación JWT y Roles
-  @Roles('admin')  // Solo accesible para administradores
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
   @Get()
-  async obtenerDocumentos() {
-    return await this.documentoService.obtenerDocumentos();
+  async getAllDocumentos() {
+    return this.documentoService.getAllDocumentos();
   }
-
   
- 
-
-  @UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos la ruta con autenticación JWT y Roles
-  @Roles('admin')  // Solo accesible para administradores
-  @Get('historial/:tipo')
-  async obtenerHistorial(@Param('tipo') tipo: string) {
-    return await this.documentoService.obtenerHistorialDeVersiones(tipo);
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
+  @Get('buscar/:id')
+  async buscarDocumentoPorId(@Param('id') id: string) {
+    const documento = await this.documentoService.obtenerDocumentoPorId(id);
+    if (!documento) {
+      throw new NotFoundException(`Documento con ID ${id} no encontrado`);
+    }
+    return documento;
   }
 
-  @UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos la ruta con autenticación JWT y Roles
-  @Roles('admin')  // Solo accesible para administradores
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
+  @Post()
+  async createDocumento(@Body() createDocumentoDto: CreateDocumentoDto) {
+    return this.documentoService.createDocumento(createDocumentoDto);
+  }
+
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
   @Put(':id')
-  async modificarDocumento(@Param('id') id: string, @Body() dto: ModificarDocumentoDto) {
-    const documento = await this.documentoService.modificarDocumento(id, dto);
-
-    if (!documento) {
-      throw new NotFoundException('Documento no encontrado');
-    }
-
-    return documento;
+  async updateDocumento(@Param('id') id: string, @Body() updateDocumentoDto: UpdateDocumentoDto) {
+    return this.documentoService.updateDocumento(id, updateDocumentoDto);
   }
 
-  @UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos la ruta con autenticación JWT y Roles
-  @Roles('admin')  // Solo accesible para administradores
-  @Patch(':id/eliminar')
-  async eliminarDocumento(@Param('id') id: string) {
-    const documento = await this.documentoService.eliminarDocumento(id);
-
-    if (!documento) {
-      throw new NotFoundException('Documento no encontrado o ya eliminado');
-    }
-
-    return documento;
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
+  @Delete(':id')
+  async deleteDocumento(@Param('id') id: string) {
+    return this.documentoService.deleteDocumento(id);
   }
 }

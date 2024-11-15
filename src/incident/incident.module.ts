@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Incident, IncidentSchema } from './schemas/incident.schema';
+import { IncidentSchema } from './schemas/incident.schema';
 import { IncidentController } from './incident.controller';
 import { IncidentService } from './incident.service';
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Incident.name, schema: IncidentSchema }]),
-  ],
+    MongooseModule.forFeature([
+      { name: 'Incident', schema: IncidentSchema }])],
   controllers: [IncidentController],
   providers: [IncidentService],
   exports: [IncidentService]

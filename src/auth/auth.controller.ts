@@ -50,6 +50,17 @@ export class AuthController {
     }
   }
 
+  @Post('logout')
+  logout(@Res() res: Response) {
+    res.cookie('auth_token', '', { 
+      httpOnly: true, 
+      secure: true, 
+      sameSite: 'none', 
+      expires: new Date(0), // Expira inmediatamente
+    });
+    return res.status(200).json({ message: 'Sesión cerrada exitosamente' });
+  }
+
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
     return await this.authService.register(registerDto);

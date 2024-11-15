@@ -1,13 +1,23 @@
-export class CrearDocumentoDto {
+import { IsString, IsDate, IsOptional } from 'class-validator';
+
+export class CreateDocumentoDto {
+  @IsString()
   tipo: string;
+
+  @IsString()
   descripcion: string;
-  fechaInicio: Date;  // Fecha de inicio de la vigencia
-  fechaFin?: Date;  // Fecha de fin
+
+  @IsOptional()
+  @IsDate()
+  fechaInicio: Date;
+
+  @IsOptional()
+  @IsDate()
+  fechaFin: Date;
 }
 
-
-// modificar-documento.dto.ts
-export class ModificarDocumentoDto {
+export class UpdateDocumentoDto {
+  @IsString()
   descripcion: string;
-  fechaFin?: Date;  // Fecha para terminar la vigencia
+
 }
