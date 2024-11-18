@@ -17,21 +17,34 @@ export class DocumentoRegulatorioService {
 
   async createDocumento(createDocumentoDto: CreateDocumentoDto): Promise<DocumentoRegulatorio> {
     const { tipo } = createDocumentoDto;
-
+  
     // Cambia cualquier documento vigente del mismo tipo a no vigente
     await this.documentoModel.updateMany({ tipo, vigente: true }, { vigente: false });
-
+  
+    // Buscar el documento más reciente del mismo tipo para obtener la última versión
+    const ultimoDocumento = await this.documentoModel
+      .findOne({ tipo })
+      .sort({ version: -1 }) // Ordenar por versión de forma descendente
+      .exec();
+  
+    let nuevaVersion = '1.0'; // Valor por defecto si no existe ningún documento
+  
+    if (ultimoDocumento) {
+      // Incrementar la versión basada en el último documento
+      const [major] = ultimoDocumento.version.split('.').map(Number); // Obtener la parte `x` de `x.0`
+      nuevaVersion = `${major + 1}.0`;
+    }
+  
     const nuevoDocumento = new this.documentoModel({
       ...createDocumentoDto,
-      version: '1.0',
+      version: nuevaVersion,
       fechaInicio: createDocumentoDto.fechaInicio || new Date(),
       vigente: true,
       eliminado: false,
     });
-
+  
     return nuevoDocumento.save();
   }
-
   async getAllDocumentos(): Promise<DocumentoRegulatorio[]> {
     return this.documentoModel.find().exec();
   }
@@ -74,6 +87,8 @@ export class DocumentoRegulatorioService {
       throw new NotFoundException(`Documento con ID: ${id} no encontrado`);
     }
     documento.eliminado = true;
+    documento.fechaFin = new Date(); 
+
     return documento.save();
   }
 }
