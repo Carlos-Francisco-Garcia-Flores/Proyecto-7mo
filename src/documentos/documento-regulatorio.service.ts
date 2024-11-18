@@ -33,7 +33,7 @@ export class DocumentoRegulatorioService {
   }
 
   async getAllDocumentos(): Promise<DocumentoRegulatorio[]> {
-    return this.documentoModel.find({ eliminado: false }).exec();
+    return this.documentoModel.find().exec();
   }
 
   // Método para obtener un documento por ID
