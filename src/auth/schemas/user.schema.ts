@@ -29,6 +29,10 @@ export class Usuarios {
 
   @Prop({ default: 'user'})
   role: string
+
+  @Prop({ default: false })
+  bloqueado: boolean;
+
 }
 
 export const UserSchema = SchemaFactory.createForClass(Usuarios).set('versionKey', false);

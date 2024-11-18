@@ -123,6 +123,13 @@ export class AuthService {
         `El usuario ${usuario} no está registrado, por favor regístrese`,
       );
     }
+
+     // Verificar si la cuenta está bloqueada manualmente por un administrador
+    if (user.bloqueado) {
+      throw new ForbiddenException(
+        'Su cuenta ha sido bloqueada por los administradores. En caso de ser necesario comuníquese con soporte técnico.',
+      );
+    }
   
     if (!user.estado) {
       throw new ForbiddenException(

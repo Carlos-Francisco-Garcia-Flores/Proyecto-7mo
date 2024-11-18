@@ -9,40 +9,6 @@ export class IncidentService {
     constructor(@InjectModel(Incident.name) private incidentModel: Model<IncidentDocument>) {}
 
 
-     // Método para bloquear a un usuario manualmente
-     async bloquearUsuarioManual(usuario: string): Promise<Incident> {
-        let incident = await this.incidentModel.findOne({ usuario });
-    
-        // Si el incidente no existe, crearlo
-        if (!incident) {
-          incident = new this.incidentModel({
-            usuario,
-            failedAttempts: 0,
-            isBlocked: true,
-            blockExpiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // Bloqueo de 1 año
-            lastAttempt: new Date(),
-          });
-        } else {
-          // Si el incidente existe, actualizar el estado
-          incident.isBlocked = true;
-          incident.blockExpiresAt = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000);
-        }
-    
-        return incident.save();
-      }
-         // Método para desbloquear a un usuario manualmente
-
-      async desbloquearUsuarioManual(usuario: string): Promise<Incident> {
-        const incident = await this.incidentModel.findOne({ usuario });
-    
-        if (!incident) {
-          throw new Error('No se encontró un incidente para este usuario');
-        }
-    
-        incident.isBlocked = false;
-        incident.blockExpiresAt = null;
-        return incident.save();
-      }
 
 
     // TODO: Registrar una nueva incidencia

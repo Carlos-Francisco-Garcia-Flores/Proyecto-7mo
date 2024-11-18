@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Param, Put, Delete, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RolesGuard } from '../common/guards/roles.guard';
@@ -9,7 +9,12 @@ import { AuthGuard } from '@nestjs/passport';
 export class UsuariosController {
   constructor(private readonly usuariosService: UsuariosService) {}
 
-
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
+  @Patch('bloquear/:id')
+  toggleBloqueo(@Param('id') id: string, @Body() body: { bloquear: boolean }) {
+    return this.usuariosService.toggleBloqueo(id, body.bloquear);
+  }
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos la ruta con autenticación JWT y Roles
   @Roles('admin')  // Solo accesible para administradores

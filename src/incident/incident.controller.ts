@@ -9,22 +9,6 @@ import { AuthGuard } from '@nestjs/passport';
 export class IncidentController {
     constructor(private readonly incidentService:IncidentService) {}
 
-
-
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
-    @Roles('admin')
-    @Post('block/:usuario')
-    async bloquearUsuario(@Param('usuario') usuario: string) {
-        return this.incidentService.bloquearUsuarioManual(usuario);
-    }
-
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
-    @Roles('admin')
-    @Post('unblock/:usuario')
-    async desbloquearUsuario(@Param('usuario') usuario: string) {
-        return this.incidentService.desbloquearUsuarioManual(usuario);
-    }
-
     @Post('incident')
     async registerFailedAttempt(@Body() registerIncidentDto: RegisterIncidentDto) {
         return this.incidentService.loginFailedAttempt(registerIncidentDto.usuario);

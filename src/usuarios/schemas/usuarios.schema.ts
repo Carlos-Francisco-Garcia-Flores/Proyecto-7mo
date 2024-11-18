@@ -1,4 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { BlobOptions } from 'buffer';
 import { Document } from 'mongoose';
 
 export type UsuarioDocument = Usuario & Document;
@@ -17,6 +18,9 @@ export class Usuario {
 
   @Prop({ required: true })
   estado: string;  
+
+  @Prop({ required: true })
+  bloqueado: boolean;
 
 }
 
