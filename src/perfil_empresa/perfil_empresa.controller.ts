@@ -1,25 +1,28 @@
-import { Body, Controller, Get, Put, UseGuards } from '@nestjs/common';
+import { Controller, Get, Put, Body,UseGuards, Param } from '@nestjs/common';
 import { PerfilEmpresaService } from './perfil_empresa.service';
-import { UpdatePerfilDto } from './dto/update-perfil.dto';
-import { Roles } from '../common/decorators/roles.decorator';
+import { PerfilEmpresa } from './schemas/perfil_empresa.schema';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../common/guards/roles.guard';
+import { Roles } from '../common/decorators/roles.decorator';
+
 
 @Controller('perfil-empresa')
 export class PerfilEmpresaController {
   constructor(private readonly perfilEmpresaService: PerfilEmpresaService) {}
 
-  // Obtener el perfil de la empresa
   @Get()
-  async obtenerPerfil() {
+  async obtenerPerfil(): Promise<PerfilEmpresa> {
     return this.perfilEmpresaService.obtenerPerfil();
   }
 
-  // Actualizar el perfil de la empresa
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('admin')
-  @Put()
-  async actualizarPerfil(@Body() updatePerfilDto: UpdatePerfilDto) {
-    return this.perfilEmpresaService.actualizarPerfil(updatePerfilDto);
+  @Put(':campo')
+  async actualizarCampo
+    (
+      @Param('campo') campo: string,
+      @Body('valor') valor: string,
+    ): Promise<PerfilEmpresa> {
+    return this.perfilEmpresaService.actualizarCampo(campo, valor);
   }
 }
