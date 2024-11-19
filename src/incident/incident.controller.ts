@@ -14,11 +14,18 @@ export class IncidentController {
         return this.incidentService.loginFailedAttempt(registerIncidentDto.usuario);
     }
 
+    @Get('incident/:usuario')
+    async getIncidentByUser(@Param('usuario') usuario: string) {
+    return this.incidentService.getIncidentByUser(usuario);
+    }
+
+
     @Get('open')
     async getOpenIncident() {
         return this.incidentService.getOpenIncident();
     }
 
+    
     @Get('correo/incidentes')
     async getOpenEmailIncident() {
         return this.incidentService.getOpenIncident();

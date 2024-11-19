@@ -57,6 +57,10 @@ export class IncidentService {
     async getOpenEmailIncident(): Promise<Incident[]> {
         return this.incidentModel.find({ status: 'open' }).exec();
     }
+    //TODO:mostrar una incidencia por nombre del usuario
+    async getIncidentByUser(usuario: string): Promise<Incident | null> {
+        return this.incidentModel.findOne({ usuario }).exec();
+      }
 
     //TODO: Cerrar una incidencia
     async closeIncident(closeIncidentDto: CloseIncidentDto): Promise<Incident> {
