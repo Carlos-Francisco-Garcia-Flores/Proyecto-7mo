@@ -11,6 +11,9 @@ export class Incident {
   @Prop({ default: 0 })
   failedAttempts: number;
 
+  @Prop({ default: 0 })
+  totalFailedAttempts: number; 
+
   @Prop()
   lastAttempt: Date;
 

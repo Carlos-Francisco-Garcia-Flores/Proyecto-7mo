@@ -7,6 +7,7 @@ import { CorsMiddleware } from './cors.middleware';
 import { AuthModule } from './auth/auth.module';
 import { IncidentModule } from './incident/incident.module';
 import { SocialModule } from './social/social.module';
+import { ConfiguracionModule } from './configuracion/configuracion.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { SocialModule } from './social/social.module';
     AuthModule,
     IncidentModule,
     SocialModule,
+    ConfiguracionModule,
   ],
 })
 export class AppModule implements NestModule {
