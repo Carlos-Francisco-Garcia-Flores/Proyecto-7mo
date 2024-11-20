@@ -18,13 +18,13 @@ export class PerfilEmpresaService {
     return perfil;
   }
 
-  async actualizarPerfil(updateDto: UpdatePerfilEmpresaDto): Promise<PerfilEmpresa> {
-    const perfil = await this.perfilEmpresaModel.findOneAndUpdate({}, updateDto, {
-      new: true,
-      upsert: true, // Crea el documento si no existe
-    }).exec();
-    return perfil;
-  }
+  // async actualizarPerfil(updateDto: UpdatePerfilEmpresaDto): Promise<PerfilEmpresa> {
+  //   const perfil = await this.perfilEmpresaModel.findOneAndUpdate({}, updateDto, {
+  //     new: true,
+  //     upsert: true, // Crea el documento si no existe
+  //   }).exec();
+  //   return perfil;
+  // }
 
   async actualizarCampo(campo: string, valor: string): Promise<PerfilEmpresa> {
     if (!['eslogan', 'mision', 'vision'].includes(campo)) {
