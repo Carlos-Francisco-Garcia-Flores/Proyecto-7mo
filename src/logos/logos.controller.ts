@@ -38,7 +38,10 @@ export class LogosController {
     return this.logosService.setVigente(id);
   }
 
-@Delete(':id')
+
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Roles('admin')
+  @Delete(':id')
   async delete(@Param('id') id: string) {
     await this.logosService.delete(id);
     return { message: `Logo con ID ${id} eliminado correctamente.` };
