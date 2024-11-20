@@ -49,4 +49,12 @@ export class LogosService {
 
     return updatedLogo;
   }
+
+  // Eliminar un logo por su ID
+  async delete(id: string): Promise<void> {
+    const deletedLogo = await this.logoModel.findByIdAndDelete(id).exec();
+    if (!deletedLogo) {
+      throw new NotFoundException(`Logo con ID ${id} no encontrado.`);
+    }
+  }
 }

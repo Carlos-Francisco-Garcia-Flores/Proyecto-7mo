@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Patch, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Patch, UseGuards, Delete } from '@nestjs/common';
 import { LogosService } from './logos.service';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from '../common/guards/roles.guard';
@@ -36,5 +36,11 @@ export class LogosController {
   @Patch(':id/vigente')
   async setVigente(@Param('id') id: string) {
     return this.logosService.setVigente(id);
+  }
+
+@Delete(':id')
+  async delete(@Param('id') id: string) {
+    await this.logosService.delete(id);
+    return { message: `Logo con ID ${id} eliminado correctamente.` };
   }
 }
