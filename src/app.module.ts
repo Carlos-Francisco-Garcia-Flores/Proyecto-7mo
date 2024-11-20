@@ -9,6 +9,7 @@ import { IncidentModule } from './incident/incident.module';
 import { SocialModule } from './social/social.module';
 import { ConfiguracionModule } from './configuracion/configuracion.module';
 import { PerfilEmpresaModule } from './perfil_empresa/perfil_empresa.module';
+import { LogosModule } from './logos/logos.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { PerfilEmpresaModule } from './perfil_empresa/perfil_empresa.module';
     SocialModule,
     ConfiguracionModule,
     PerfilEmpresaModule,
+    LogosModule,
   ],
 })
 export class AppModule implements NestModule {

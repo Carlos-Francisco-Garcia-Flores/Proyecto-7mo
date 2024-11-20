@@ -9,7 +9,7 @@ import { Roles } from '../common/decorators/roles.decorator';
 @Controller('perfil-empresa')
 export class PerfilEmpresaController {
   constructor(private readonly perfilEmpresaService: PerfilEmpresaService) {}
-
+  
   @Get()
   async obtenerPerfil(): Promise<PerfilEmpresa> {
     return this.perfilEmpresaService.obtenerPerfil();
