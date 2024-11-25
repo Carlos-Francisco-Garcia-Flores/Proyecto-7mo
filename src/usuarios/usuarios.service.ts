@@ -29,9 +29,14 @@ export class UsuariosService {
     return this.usuarioModel.findById(id).exec();
   }
 
-  async findByEmail(email: string): Promise<Usuario | undefined> {
-    return this.usuarioModel.findOne({ email }).exec();  // Busca por el campo 'email'
+  async findByEmail(correo_Electronico: string): Promise<Usuario | undefined> {
+    return this.usuarioModel.findOne({ correo_Electronico }).exec();  // Busca por el campo 'correo_electronico'
   }
+
+  async findByUser(usuario: string): Promise<Usuario | undefined> {
+    return this.usuarioModel.findOne({ usuario }).exec();  // Busca por el campo 'usuario'
+  }
+
 
   async update(id: string, updateUsuarioDto: any): Promise<Usuario> {
     return this.usuarioModel.findByIdAndUpdate(id, updateUsuarioDto, { new: true }).exec();

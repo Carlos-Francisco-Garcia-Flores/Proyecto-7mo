@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Param, Delete, UseGuards, NotFoundException  } from '@nestjs/common';
 import { UsuariosService } from './usuarios.service';
 import { Roles } from '../common/decorators/roles.decorator';
 import { RolesGuard } from '../common/guards/roles.guard';
@@ -23,12 +23,21 @@ export class UsuariosController {
     return this.usuariosService.findAll();
   }
 
-  // @UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos la ruta con autenticación JWT y Roles
-  // @Roles('admin')  // Solo accesible para administradores
-  // @Get('buscar')
-  // findOne(@Param('id') id: string) {
-  //   return this.usuariosService.findOne(id);
-  // }
+ // Buscar usuario por nombre de usuario
+//  @UseGuards(AuthGuard('jwt'), RolesGuard)
+//  @Roles('admin')
+ @Get('verusuario/:usuario')
+ async findByUser(@Param('usuario') usuario: string) {
+   const user = await this.usuariosService.findByUser(usuario);
+   if (!user) {
+     throw new NotFoundException(`Usuario con el nombre '${usuario}' no encontrado`);
+   }
+   return user;
+ }
+ 
+  
+
+  
 
   @UseGuards(AuthGuard('jwt'), RolesGuard)  // Protegemos la ruta con autenticación JWT y Roles
   @Roles('admin')  // Solo accesible para administradores
