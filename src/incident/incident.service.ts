@@ -82,18 +82,25 @@ export class IncidentService {
 
   // Mostrar incidencia por usuario 
   async getIncidentByUser(usuario: string): Promise<Incident | null> {
-    // Verificar si el usuario está bloqueado por un administrador
+    // Verificar si el usuario existe y está bloqueado por un administrador
     const user = await this.usuariosService.findByUser(usuario);
     if (!user) {
       throw new NotFoundException(`Usuario '${usuario}' no encontrado.`);
     }
-
+  
     if (user.bloqueado) {
       throw new ForbiddenException('El usuario ha sido bloqueado por un administrador.');
     }
-
-    return this.incidentModel.findOne({ usuario }).exec();
+  
+    // Buscar incidencia asociada al usuario
+    const incident = await this.incidentModel.findOne({ usuario }).exec();
+    if (!incident) {
+      return null; // Devuelve null si no hay incidencia
+    }
+  
+    return incident;
   }
+  
 
   // Cerrar una incidencia
   async closeIncident(closeIncidentDto: CloseIncidentDto): Promise<Incident> {

@@ -17,20 +17,26 @@ export class IncidentController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Roles('admin')
   @Get('incident/:usuario')
-  async getIncidentByUser(@Param('usuario') usuario: string) {
-    try {
-      const incident = await this.incidentService.getIncidentByUser(usuario);
-      if (!incident) {
-        return { message: `No se encontraron incidencias para el usuario '${usuario}'.` };
-      }
-      return incident;
-    } catch (error) {
-      if (error instanceof NotFoundException || error instanceof ForbiddenException) {
-        throw error; // Lanza el error tal cual para manejar respuestas claras
-      }
-      throw new Error('Ocurrió un error al obtener las incidencias.'); // Manejo genérico de errores
+async getIncidentByUser(@Param('usuario') usuario: string) {
+  try {
+    const incident = await this.incidentService.getIncidentByUser(usuario);
+
+    // Si no existe una incidencia para el usuario
+    if (!incident) {
+      return { message: `No se encontraron incidencias para el usuario '${usuario}'.` };
     }
+
+    return incident;
+  } catch (error) {
+    // Manejar errores específicos
+    if (error instanceof NotFoundException || error instanceof ForbiddenException) {
+      throw error;
+    }
+
+    // Manejo genérico de errores
+    throw new Error('Ocurrió un error al obtener las incidencias.');
   }
+}
 
   @Get('open')
   async getOpenIncident() {
