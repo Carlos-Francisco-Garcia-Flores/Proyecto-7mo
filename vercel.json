@@ -19,7 +19,7 @@
               "PATCH"
                      ],
             "headers": {
-                         "Access-Control-Allow-Origin": "http://localhost:5173,https://beatbox-blond.vercel.app,https://beatbox.developers506.com,https://beat-box.com,https://beatbox.com",
+                         "Access-Control-Allow-Origin": "http://localhost:5173,https://beatbox-blond.vercel.app,https://beatbox.developers506.com,https://beat-box.com,https://beat-box.com:8080,https://beatbox.com,https://beatbox.com:8080",
                          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, PATCH",
                          "Access-Control-Allow-Headers": "Content-Type, Authorization, Content-Disposition",
                          "Access-Control-Allow-Credentials": "true"
