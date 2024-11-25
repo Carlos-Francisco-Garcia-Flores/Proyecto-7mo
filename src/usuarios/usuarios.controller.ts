@@ -24,8 +24,8 @@ export class UsuariosController {
   }
 
  // Buscar usuario por nombre de usuario
-//  @UseGuards(AuthGuard('jwt'), RolesGuard)
-//  @Roles('admin')
+ @UseGuards(AuthGuard('jwt'), RolesGuard)
+ @Roles('admin')
  @Get('verusuario/:usuario')
  async findByUser(@Param('usuario') usuario: string) {
    const user = await this.usuariosService.findByUser(usuario);
