@@ -1,15 +1,17 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, Inject, forwardRef, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Incident, IncidentDocument } from './schemas/incident.schema';
 import { Configuracion, ConfiguracionDocument } from '../configuracion/schemas/configuracion.schema';
 import { CloseIncidentDto, UsernameIsBlockedDto } from './dto/incident.dto';
+import { UsuariosService } from '../usuarios/usuarios.service';
 
 @Injectable()
 export class IncidentService {
   constructor(
     @InjectModel(Incident.name) private incidentModel: Model<IncidentDocument>,
     @InjectModel(Configuracion.name) private configuracionModel: Model<ConfiguracionDocument>,
+    @Inject(forwardRef(() => UsuariosService)) private readonly usuariosService: UsuariosService,
   ) {}
 
   // Obtener configuración
@@ -78,8 +80,18 @@ export class IncidentService {
     return this.incidentModel.find({ status: 'open' }).exec();
   }
 
-  // Mostrar incidencia por usuario
+  // Mostrar incidencia por usuario 
   async getIncidentByUser(usuario: string): Promise<Incident | null> {
+    // Verificar si el usuario está bloqueado por un administrador
+    const user = await this.usuariosService.findByUser(usuario);
+    if (!user) {
+      throw new NotFoundException(`Usuario '${usuario}' no encontrado.`);
+    }
+
+    if (user.bloqueado) {
+      throw new ForbiddenException('El usuario ha sido bloqueado por un administrador.');
+    }
+
     return this.incidentModel.findOne({ usuario }).exec();
   }
 
