@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Res, HttpStatus,  Get, Req, UnauthorizedException} from '@nestjs/common';
+import { Body, Controller, Post, Res, HttpStatus,  Get, Req, UnauthorizedException, HttpException} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ForgotPasswordDto, ResetPasswordDto } from './dto/resetPassword.dto';
 import { RegisterDto, ActivationDto } from './dto/register.dto';
@@ -11,7 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly jwtService: JwtService 
+    private readonly jwtService: JwtService,
   ) {}
 
 
@@ -79,6 +79,27 @@ export class AuthController {
   @Post('verify/otp/code')
   async verify_email(@Body() activationDto: ActivationDto) {
     return await this.authService.verify_email(activationDto);
+  }
+
+  
+  @Post('send-verification')
+  async sendVerificationEmail(@Body('email') email: string) {
+    if (!email) {
+      throw new HttpException(
+        'El campo "email" es obligatorio',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    try {
+      const response = await this.authService.send_email_verification(email);
+      return response;
+    } catch (error) {
+      throw new HttpException(
+        'Error al enviar el correo de verificación',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
 

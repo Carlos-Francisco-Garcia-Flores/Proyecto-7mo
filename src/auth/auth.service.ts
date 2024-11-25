@@ -209,7 +209,7 @@ export class AuthService {
   }
 
   // Enviar correo de verificación por OTP
-  private async send_email_verification(email: string): Promise<any> {
+   async send_email_verification(email: string): Promise<any> {
     const otpCode = this.otpService.generateOTP();
     await this.emailService.send_code_verfication(otpCode, email);
 

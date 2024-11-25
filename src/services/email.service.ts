@@ -85,6 +85,7 @@ export class EmailService {
               ${otpCode}
             </span>
           </p>
+          <p style="font-size: 14px;">El código solo sera valido por 15 minutos.</p>
           <p style="font-size: 14px;">Si no realizó esta solicitud, puede ignorar este mensaje.</p>
           <p>Atentamente,</p>
           <p><strong>BeatBox</strong></p>
