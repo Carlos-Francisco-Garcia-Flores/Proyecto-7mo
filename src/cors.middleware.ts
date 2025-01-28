@@ -5,12 +5,11 @@ import { Request, Response, NextFunction } from 'express';
 export class CorsMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     const allowedOrigins = ['http://localhost:5173', 'https://beatbox-blond.vercel.app'];
-    const origin = req.headers.origin as string;
+    const origin = req.headers.origin?.replace(/\/$/, ''); // Remueve la barra final, si existe
 
-    if (allowedOrigins.includes(origin)) {
+    if (origin && allowedOrigins.includes(origin)) {
       res.header('Access-Control-Allow-Origin', origin);
     }
-
 
     res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization');
