@@ -41,12 +41,11 @@ export class AuthService {
   
     console.log('Iniciando registro...'); // Log antes del inicio del flujo
   
-  
     // Verificar si el nombre de usuario ya está registrado
     const existingUser = await this.userModel.findOne({ usuario });
     if (existingUser) {
       console.log(`El usuario '${usuario}' ya está registrado.`);
-      throw new ConflictException({
+      throw new BadRequestException({
         message: `El nombre de usuario '${usuario}' ya está en uso.`,
         error: 'Conflict',
       });
@@ -56,7 +55,7 @@ export class AuthService {
     const existingEmail = await this.userModel.findOne({ correo_Electronico });
     if (existingEmail) {
       console.log(`El correo '${correo_Electronico}' ya está registrado.`);
-      throw new ConflictException({
+      throw new BadRequestException({
         message: `El correo electrónico '${correo_Electronico}' ya está en uso.`,
         error: 'Conflict',
       });

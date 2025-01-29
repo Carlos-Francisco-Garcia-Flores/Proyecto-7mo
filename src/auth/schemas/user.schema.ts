@@ -20,7 +20,7 @@ export class Usuarios {
   @MinLength(6, { message: "La contraseña debe tener al menos 6 caracteres"})
   contraseña: string;
 
-  @Prop({ required: true})
+  @Prop({ required: true, unique: true})
   @IsEmail({}, { message: "Por favor, ingrese un correo valido" })  
   correo_Electronico: string;
 
