@@ -41,6 +41,16 @@ export class AuthService {
   
     console.log('Iniciando registro...'); // Log antes del inicio del flujo
   
+    // Verificar si el correo ya está registrado
+    const existingEmail = await this.userModel.findOne({ correo_Electronico });
+    if (existingEmail) {
+      console.log(`El correo '${correo_Electronico}' ya está registrado.`);
+      throw new BadRequestException({
+        message: `El correo electrónico '${correo_Electronico}' ya está registrado, seleccione un correo valido.`,
+        error: 'Conflict',
+      });
+    }
+
     // Verificar si el nombre de usuario ya está registrado
     const existingUser = await this.userModel.findOne({ usuario });
     if (existingUser) {
@@ -51,15 +61,7 @@ export class AuthService {
       });
     }
 
-    // Verificar si el correo ya está registrado
-    const existingEmail = await this.userModel.findOne({ correo_Electronico });
-    if (existingEmail) {
-      console.log(`El correo '${correo_Electronico}' ya está registrado.`);
-      throw new BadRequestException({
-        message: `El correo electrónico '${correo_Electronico}' ya está en uso.`,
-        error: 'Conflict',
-      });
-    }
+    
   
     console.log('Verificando contraseña con zxcvbn...'); // Log antes de la validación de la contraseña
   
